@@ -29,6 +29,7 @@
 
     body {
       margin: 0;
+      padding-left: 248px;
       background: var(--paper);
       color: var(--ink);
       font-family: "Lato", "Segoe UI", Arial, sans-serif;
@@ -36,26 +37,60 @@
     }
 
     .view-tabs {
-      position: sticky;
+      position: fixed;
       top: 0;
+      bottom: 0;
+      left: 0;
       z-index: 20;
       display: flex;
-      justify-content: center;
-      gap: 5px;
-      padding: 10px 18px;
-      border-bottom: 1px solid #28302e;
-      background: rgba(0, 1, 0, 0.92);
+      width: 248px;
+      flex-direction: column;
+      gap: 8px;
+      padding: 30px 20px;
+      border-right: 1px solid #28302e;
+      background: rgba(0, 1, 0, 0.96);
       backdrop-filter: blur(16px);
+    }
+
+    .nav-brand {
+      display: block;
+      margin: 0 10px 42px;
+      color: #f4f6f5;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -.015em;
+    }
+
+    .nav-label {
+      display: block;
+      margin: 0 10px 8px;
+      color: #68716e;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .nav-progress {
+      margin: auto 10px 0;
+      color: #68716e;
+      font-size: 11px;
+      line-height: 1.5;
     }
 
     .view-tab {
       min-height: 42px;
-      padding: 9px 18px;
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      align-items: center;
+      width: 100%;
+      padding: 12px 13px;
       border: 1px solid transparent;
-      border-radius: 999px;
+      border-radius: 8px;
       color: #aeb6b3;
       background: transparent;
       font: 700 14px/1 "Lato", "Segoe UI", Arial, sans-serif;
+      text-align: left;
       letter-spacing: 0.02em;
       cursor: pointer;
     }
@@ -71,6 +106,14 @@
       background: var(--link);
       box-shadow: 0 0 24px rgba(0, 185, 154, 0.18);
     }
+
+    .chapter-number {
+      color: #65706c;
+      font-size: 10px;
+      letter-spacing: .08em;
+    }
+
+    .view-tab[aria-selected="true"] .chapter-number { color: #075446; }
 
     .view-tab:focus-visible {
       outline: 3px solid var(--accent);
@@ -421,12 +464,28 @@
     }
 
     @media (max-width: 620px) {
+      body { padding-left: 0; padding-top: 63px; }
       .concept-descriptor { padding-top: 22px; }
       .concept-descriptor time { margin-bottom: 22px; font-size: 16px; }
       .concept-descriptor h1 { margin-bottom: 23px; }
       .concept-descriptor p { margin-bottom: 27px; }
-      .view-tabs { justify-content: flex-start; overflow-x: auto; }
-      .view-tab { flex: 0 0 auto; }
+      .view-tabs {
+        top: 0;
+        right: 0;
+        bottom: auto;
+        width: auto;
+        height: 63px;
+        flex-direction: row;
+        align-items: center;
+        padding: 10px 12px;
+        border-right: 0;
+        border-bottom: 1px solid #28302e;
+        overflow-x: auto;
+      }
+      .nav-brand,
+      .nav-label,
+      .nav-progress { display: none; }
+      .view-tab { flex: 0 0 auto; width: auto; grid-template-columns: 20px auto; }
       .research-stage { grid-template-columns: 1fr; min-height: 0; }
       .paper-sheet,
       .evidence-card { width: 100%; }
@@ -436,10 +495,13 @@
   </style>
 </head>
 <body>
-  <nav class="view-tabs" role="tablist" aria-label="Explore Synapse">
-    <button class="view-tab" id="tab-overview" type="button" role="tab" aria-selected="true" aria-controls="overview" tabindex="0">Overview</button>
-    <button class="view-tab" id="tab-teach" type="button" role="tab" aria-selected="false" aria-controls="teach" tabindex="-1">Learning flow</button>
-    <button class="view-tab" id="tab-research" type="button" role="tab" aria-selected="false" aria-controls="research" tabindex="-1">Papers & citations</button>
+  <nav class="view-tabs" role="tablist" aria-label="Synapse Explainer chapters" aria-orientation="vertical">
+    <span class="nav-brand">Synapse Explainer</span>
+    <span class="nav-label">Index / chapters</span>
+    <button class="view-tab" id="tab-overview" type="button" role="tab" aria-selected="true" aria-controls="overview" tabindex="0"><span class="chapter-number">01</span><span>Overview</span></button>
+    <button class="view-tab" id="tab-teach" type="button" role="tab" aria-selected="false" aria-controls="teach" tabindex="-1"><span class="chapter-number">02</span><span>Learning flow</span></button>
+    <button class="view-tab" id="tab-research" type="button" role="tab" aria-selected="false" aria-controls="research" tabindex="-1"><span class="chapter-number">03</span><span>Papers & citations</span></button>
+    <span class="nav-progress">Three chapters on temporary memory, demonstration learning, and the research connection.</span>
   </nav>
 
   <div class="theme-band theme-band--dark">
@@ -569,8 +631,8 @@
       tab.addEventListener("click", () => activateTab(tab));
       tab.addEventListener("keydown", (event) => {
         let next = null;
-        if (event.key === "ArrowRight") next = tabs[(index + 1) % tabs.length];
-        if (event.key === "ArrowLeft") next = tabs[(index - 1 + tabs.length) % tabs.length];
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") next = tabs[(index + 1) % tabs.length];
+        if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = tabs[(index - 1 + tabs.length) % tabs.length];
         if (event.key === "Home") next = tabs[0];
         if (event.key === "End") next = tabs[tabs.length - 1];
         if (next) {

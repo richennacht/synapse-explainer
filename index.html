@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.6/dist/katex.min.css" integrity="sha384-M59ezskvvpvT+a+C1x088YJ3DVmK+wZdX0UkVKalOI4Qi5Nwv0WrvpqHcfa2HQqB" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.18.6/dist/katex.min.js" integrity="sha384-7jGyG5zFwmEamqNWdCbpsPn+GTWEis3lnV7X/jXHyhFpJG7ExABLyMapabg8F4+p" crossorigin="anonymous"></script>
   <style>
     :root {
       /* Spectral surface palette sampled from the supplied dark visualization. */
@@ -505,7 +507,7 @@
               starting point for asking how a demonstrated action could leave a
               short-lived trace for immediate reuse.
             </p>
-            <span class="equation">M<sub>t</sub> = λM<sub>t-1</sub> + ηv<sub>t</sub>k<sub>t</sub><sup>T</sup></span>
+            <span class="equation math" data-tex="M_t = \lambda M_{t-1} + \eta v_t k_t^{\mathsf T}" aria-label="M sub t equals lambda M sub t minus one plus eta v sub t k sub t transpose">Mₜ = λMₜ₋₁ + ηvₜkₜᵀ</span>
             <svg class="paper-plot" viewBox="0 0 430 128" role="img" aria-label="Recall accuracy falls as conflicting demonstrations increase">
               <title>Recall accuracy after interference</title>
               <line x1="34" y1="12" x2="34" y2="104" stroke="#9c978e" />
@@ -534,6 +536,17 @@
   <script>
     const tabs = [...document.querySelectorAll('[role="tab"]')];
     const panels = [...document.querySelectorAll('[role="tabpanel"]')];
+
+    window.addEventListener("load", () => {
+      if (!window.katex) return;
+      document.querySelectorAll(".math[data-tex]").forEach((element) => {
+        window.katex.render(element.dataset.tex, element, {
+          displayMode: true,
+          throwOnError: false,
+          strict: "warn"
+        });
+      });
+    });
 
     function activateTab(tab, moveFocus = false) {
       const panelId = tab.getAttribute("aria-controls");
@@ -585,3 +598,4 @@
   </script>
 </body>
 </html>
+

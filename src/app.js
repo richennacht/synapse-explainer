@@ -1,63 +1,10 @@
-import { initialState, applyEvent } from "./simulation.js";
-import { createSynapseRenderer } from "./renderer.js";
-
-const $ = selector => document.querySelector(selector);
-const percent = value => `${Math.round(value*100)}%`;
-let state = initialState();
-let renderer = { update(){}, pause(){}, play(){}, redraw(){} };
-
-function drawChart() {
-  const canvas=$("#plot"), ctx=canvas.getContext("2d");
-  const scale=Math.min(devicePixelRatio||1,2), width=canvas.clientWidth, height=canvas.clientHeight;
-  canvas.width=Math.round(width*scale); canvas.height=Math.round(height*scale); ctx.scale(scale,scale);
-  ctx.clearRect(0,0,width,height);
-  const style=getComputedStyle(document.documentElement);
-  const muted=style.getPropertyValue("--muted").trim()||"#818986";
-  ctx.font="12px Lato"; ctx.fillStyle=muted; ctx.strokeStyle="#26302d"; ctx.lineWidth=1;
-  [0,.25,.5,.75,1].forEach(value=>{const y=height-34-value*(height-58);ctx.beginPath();ctx.moveTo(42,y);ctx.lineTo(width-14,y);ctx.stroke();ctx.fillText(`${Math.round(value*100)}%`,6,y+4);});
-  const plot=(key,color,dash=[])=>{ctx.strokeStyle=color;ctx.lineWidth=4;ctx.setLineDash(dash);ctx.beginPath();state.history.forEach((point,index)=>{const x=42+(index/Math.max(1,state.history.length-1))*(width-58);const y=height-34-point[key]*(height-58);index?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.stroke();ctx.setLineDash([]);};
-  plot("strength","#00b99a"); plot("interference","#812786",[8,6]);
-  ctx.fillStyle="#00b99a";ctx.fillText("Memory strength",48,18);ctx.fillStyle="#a94caf";ctx.fillText("Interference",168,18);
-}
-
-function narrative() {
-  if(state.phase==="Idle") return "Add a demonstration to write the first temporary association.";
-  if(state.phase==="Encoding") return "The new association was added to temporary state; slow parameters did not change.";
-  if(state.phase==="Interference") return "A competing write reduced confidence in the original association.";
-  if(state.phase==="Recalled") return "The stored association is stronger than its competitor, so recall succeeds.";
-  return "Interference is at least as strong as the stored association, so recall is uncertain.";
-}
-
-function render() {
-  $("#phase-label").textContent=state.phase;
-  $("#strength").textContent=percent(state.memoryStrength);
-  $("#interference").textContent=percent(state.interference);
-  $("#count").textContent=state.demonstrations;
-  $("#matrix-memory").textContent=state.memoryStrength.toFixed(3);
-  $("#matrix-interference").textContent=state.interference.toFixed(3);
-  $("#decay-value").textContent=state.decay.toFixed(2);
-  $("#state-summary").textContent=narrative();
-  $("#prediction").textContent=state.phase==="Recalled"?$("#action").value:state.phase==="Uncertain"?"uncertain":"not tested";
-  $("#expected").textContent=$("#action").value;
-  renderer.update(state); drawChart();
-}
-
-function dispatch(event){state=applyEvent(state,event);render();}
-$("#demonstrate").addEventListener("click",()=>dispatch({type:"DEMONSTRATE"}));
-$("#conflict").addEventListener("click",()=>dispatch({type:"CONFLICT"}));
-$("#test").addEventListener("click",()=>dispatch({type:"TEST"}));
-$("#decay").addEventListener("input",event=>dispatch({type:"SET_DECAY",value:Number(event.target.value)}));
-$("#reset").addEventListener("click",()=>{state=initialState();render();});
-$("#pause").addEventListener("click",event=>{const paused=event.currentTarget.getAttribute("aria-pressed")==="true";event.currentTarget.setAttribute("aria-pressed",String(!paused));event.currentTarget.textContent=paused?"Pause motion":"Resume motion";paused?renderer.play():renderer.pause();});
-
-const chapterTargets=[...document.querySelectorAll(".chapters a")]
-  .map(link=>document.querySelector(link.hash)).filter(Boolean);
-const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){document.querySelectorAll(".chapters a").forEach(link=>link.classList.toggle("active",link.hash===`#${entry.target.id}`));}}),{rootMargin:"-35% 0px -55%"});
-chapterTargets.forEach(target=>observer.observe(target));
-window.addEventListener("resize",drawChart);
-window.addEventListener("load",()=>{
-  if(window.katex) window.katex.render("M_t = \\lambda M_{t-1} + \\eta v_t k_t^{\\mathsf T}",$("#equation"),{displayMode:true,throwOnError:false});
-  try{renderer=createSynapseRenderer($("#gl-canvas"));}catch(error){$("#webgl-status").textContent=error.message;$("#webgl-status").hidden=false;}
-  render();
-});
+import{initialState,applyEvent}from"./simulation.js";import{createSynapseRenderer}from"./renderer.js";
+const $=s=>document.querySelector(s),percent=v=>`${Math.round(v*100)}%`;let state=initialState(),renderer={update(){}};
+function drawChart(){const canvas=$("#plot"),ctx=canvas.getContext("2d"),d=Math.min(devicePixelRatio||1,2),w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=w*d;canvas.height=h*d;ctx.scale(d,d);ctx.clearRect(0,0,w,h);ctx.font="12px Lato";ctx.fillStyle="#858682";ctx.strokeStyle="#e3e3de";ctx.lineWidth=1;[0,.25,.5,.75,1].forEach(v=>{const y=h-35-v*(h-65);ctx.beginPath();ctx.moveTo(46,y);ctx.lineTo(w-18,y);ctx.stroke();ctx.fillText(`${v*100}%`,8,y+4)});const plot=(key,color,dash=[])=>{ctx.strokeStyle=color;ctx.lineWidth=3;ctx.setLineDash(dash);ctx.beginPath();state.history.forEach((point,i)=>{const x=46+i/Math.max(1,state.history.length-1)*(w-68),y=h-35-point[key]*(h-65);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();ctx.setLineDash([])};plot("strength","#347f76");plot("interference","#806077",[7,6]);ctx.fillStyle="#347f76";ctx.fillText("move left",48,20);ctx.fillStyle="#806077";ctx.fillText("move right",130,20)}
+function message(){if(state.phase==="Idle")return"The temporary memory is empty. No action has an advantage yet.";if(state.phase==="Encoding")return"The compatible example strengthened the move-left route. The network’s slow trained parameters did not change.";if(state.phase==="Interference")return"The contradictory example strengthened move right and weakened the original route.";if(state.phase==="Recalled")return"Move left is stronger, so the model recalls the demonstrated action.";return"Neither intended route has a clear advantage. The model reports uncertainty."}
+function render(){$("#phase-label").textContent=state.phase==="Idle"?"Ready":state.phase;$("#strength").textContent=percent(state.memoryStrength);$("#interference").textContent=percent(state.interference);$("#decay-value").textContent=state.decay.toFixed(2);$("#prediction").textContent=state.phase==="Recalled"?"Move left":state.phase==="Uncertain"?"Uncertain":"Not tested";$("#state-summary").textContent=message();renderer.update(state);drawChart()}
+function dispatch(type){state=applyEvent(state,{type});render()}$("#demonstrate").onclick=()=>dispatch("DEMONSTRATE");$("#conflict").onclick=()=>dispatch("CONFLICT");$("#test").onclick=()=>dispatch("TEST");$("#reset").onclick=()=>{state=initialState();render()};$("#decay").oninput=e=>{state=applyEvent(state,{type:"SET_DECAY",value:Number(e.target.value)});render()};
+const panel=$("#index-panel"),shade=$("#drawer-shade"),trigger=$("#index-trigger");function drawer(open){panel.classList.toggle("open",open);panel.setAttribute("aria-hidden",String(!open));trigger.setAttribute("aria-expanded",String(open));shade.hidden=!open;if(open)$("#index-close").focus();else trigger.focus()}trigger.onclick=()=>drawer(true);$("#index-close").onclick=()=>drawer(false);shade.onclick=()=>drawer(false);document.addEventListener("keydown",e=>{if(e.key==="Escape"&&panel.classList.contains("open"))drawer(false)});document.querySelectorAll(".index-panel a").forEach(a=>a.onclick=()=>drawer(false));
+const links=[...document.querySelectorAll(".index-panel a")];const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle("active",a.hash===`#${e.target.id}`))}),{rootMargin:"-30% 0px -60%"});links.map(a=>document.querySelector(a.hash)).filter(Boolean).forEach(x=>observer.observe(x));window.addEventListener("resize",drawChart);
+try{renderer=createSynapseRenderer($("#gl-canvas"))}catch(error){$("#webgl-status").textContent=error.message;$("#webgl-status").hidden=false}render();
 

@@ -3,661 +3,115 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Synapse Explainer</title>
+  <title>Synapse Explainer — Learn by Demonstration</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.6/dist/katex.min.css" integrity="sha384-M59ezskvvpvT+a+C1x088YJ3DVmK+wZdX0UkVKalOI4Qi5Nwv0WrvpqHcfa2HQqB" crossorigin="anonymous" />
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.18.6/dist/katex.min.js" integrity="sha384-7jGyG5zFwmEamqNWdCbpsPn+GTWEis3lnV7X/jXHyhFpJG7ExABLyMapabg8F4+p" crossorigin="anonymous"></script>
-  <style>
-    :root {
-      /* Spectral surface palette sampled from the supplied dark visualization. */
-      --paper: #000100;
-      --ink: #e7eceb;
-      --muted: #727977;
-      --link: #00b99a;
-      --accent: #ffde00;
-      --violet: #812786;
-      --light-paper: #f8f8f8;
-      --light-ink: #444444;
-      --light-muted: #aaaaaa;
-      --light-link: #0181eb;
-      --light-accent: #dab017;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      padding-left: 248px;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: "Lato", "Segoe UI", Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .view-tabs {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 20;
-      display: flex;
-      width: 248px;
-      flex-direction: column;
-      gap: 8px;
-      padding: 30px 20px;
-      border-right: 1px solid #28302e;
-      background: rgba(0, 1, 0, 0.96);
-      backdrop-filter: blur(16px);
-    }
-
-    .nav-brand {
-      display: block;
-      margin: 0 10px 42px;
-      color: #f4f6f5;
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -.015em;
-    }
-
-    .nav-label {
-      display: block;
-      margin: 0 10px 8px;
-      color: #68716e;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-    }
-
-    .nav-progress {
-      margin: auto 10px 0;
-      color: #68716e;
-      font-size: 11px;
-      line-height: 1.5;
-    }
-
-    .view-tab {
-      min-height: 42px;
-      display: grid;
-      grid-template-columns: 28px 1fr;
-      align-items: center;
-      width: 100%;
-      padding: 12px 13px;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      color: #aeb6b3;
-      background: transparent;
-      font: 700 14px/1 "Lato", "Segoe UI", Arial, sans-serif;
-      text-align: left;
-      letter-spacing: 0.02em;
-      cursor: pointer;
-    }
-
-    .view-tab:hover {
-      color: #ffffff;
-      background: #151b19;
-    }
-
-    .view-tab[aria-selected="true"] {
-      border-color: rgba(0, 185, 154, 0.55);
-      color: #00110d;
-      background: var(--link);
-      box-shadow: 0 0 24px rgba(0, 185, 154, 0.18);
-    }
-
-    .chapter-number {
-      color: #65706c;
-      font-size: 10px;
-      letter-spacing: .08em;
-    }
-
-    .view-tab[aria-selected="true"] .chapter-number { color: #075446; }
-
-    .view-tab:focus-visible {
-      outline: 3px solid var(--accent);
-      outline-offset: 2px;
-    }
-
-    .tab-panel[hidden] { display: none; }
-
-    ::selection {
-      background: var(--violet);
-      color: #ffffff;
-    }
-
-    .concept-descriptor {
-      width: min(100%, 1064px);
-      margin: 0 auto;
-      padding: 24px clamp(28px, 8.5vw, 90px) 38px;
-    }
-
-    .theme-band {
-      width: 100%;
-    }
-
-    .theme-band--dark {
-      background: var(--paper);
-      color: var(--ink);
-    }
-
-    .theme-band--light {
-      background: var(--light-paper);
-      color: var(--light-ink);
-    }
-
-    .concept-descriptor time {
-      display: block;
-      margin-bottom: 27px;
-      color: var(--muted);
-      font-size: 19px;
-      line-height: 1.25;
-      letter-spacing: 0.01em;
-    }
-
-    .concept-descriptor h1 {
-      margin: 0 0 30px;
-      font-size: clamp(38px, 4.5vw, 48px);
-      line-height: 1.05;
-      font-weight: 700;
-      letter-spacing: -0.025em;
-    }
-
-    .concept-descriptor p {
-      max-width: 880px;
-      margin: 0 0 35px;
-      font-size: clamp(20px, 2.25vw, 25px);
-      line-height: 1.53;
-      letter-spacing: 0.002em;
-    }
-
-    .concept-descriptor p:last-child { margin-bottom: 0; }
-
-    .concept-descriptor a,
-    .concept-descriptor .blue {
-      color: var(--link);
-      text-decoration-color: var(--link);
-      text-decoration-thickness: 1px;
-      text-underline-offset: 2px;
-    }
-
-    .concept-descriptor .accent { color: var(--accent); }
-    .concept-descriptor em { font-style: italic; }
-
-    .theme-band--light .concept-descriptor {
-      min-height: calc(100vh - 63px);
-      padding-top: clamp(54px, 8vh, 84px);
-      padding-bottom: 72px;
-    }
-
-    .theme-band--light .eyebrow {
-      display: block;
-      margin-bottom: 30px;
-      color: var(--light-muted);
-      font-size: 18px;
-      line-height: 1.25;
-    }
-
-    .theme-band--light h2 {
-      margin: 0 0 34px;
-      font-size: clamp(39px, 4.5vw, 48px);
-      line-height: 1.06;
-      letter-spacing: -0.025em;
-    }
-
-    .theme-band--light .concept-descriptor p {
-      max-width: 900px;
-      margin-bottom: 34px;
-      color: #444444;
-      font-size: clamp(20px, 2.15vw, 24px);
-      line-height: 1.58;
-    }
-
-    .theme-band--light a,
-    .theme-band--light .blue {
-      color: var(--light-link);
-      text-decoration-color: var(--light-link);
-    }
-
-    .theme-band--light .accent { color: var(--light-accent); }
-
-    .depth-demo {
-      margin-top: 32px;
-    }
-
-    .theme-band--research {
-      background: #070a09;
-      color: var(--ink);
-    }
-
-    .research-section {
-      width: min(100%, 1220px);
-      margin: 0 auto;
-      padding: 64px clamp(28px, 6vw, 72px) 76px;
-    }
-
-    .research-section > .eyebrow {
-      display: block;
-      margin-bottom: 18px;
-      color: #818986;
-      font-size: 15px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .research-section > h2 {
-      max-width: 780px;
-      margin: 0;
-      font-size: clamp(36px, 5vw, 58px);
-      line-height: 1.04;
-      letter-spacing: -0.03em;
-    }
-
-    .demo-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 14px;
-      color: var(--light-muted);
-      font-size: 14px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .demo-label strong {
-      color: var(--light-ink);
-      font-size: 14px;
-    }
-
-    .research-stage {
-      position: relative;
-      display: grid;
-      grid-template-columns: minmax(0, 1.35fr) minmax(230px, 0.65fr);
-      gap: clamp(20px, 4vw, 48px);
-      min-height: 580px;
-      padding: clamp(28px, 5vw, 62px);
-      overflow: hidden;
-      border-radius: 3px;
-      background: #21140d url("dark-walnut-desktop.png") center / cover;
-      box-shadow: 0 24px 55px rgba(18, 13, 9, 0.24);
-      isolation: isolate;
-    }
-
-    .research-stage::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(135deg, rgba(255,255,255,.05), transparent 35%, rgba(0,0,0,.18));
-      z-index: 5;
-    }
-
-    .paper-sheet,
-    .evidence-card {
-      position: relative;
-      z-index: 2;
-    }
-
-    .paper-sheet {
-      width: 100%;
-      min-height: 460px;
-      padding: clamp(28px, 4vw, 46px);
-      color: #282828;
-      background: #f8f4e9;
-      box-shadow: 7px 10px 0 rgba(45, 24, 12, .3), 0 22px 34px rgba(0, 0, 0, .35);
-    }
-
-    .paper-sheet::before {
-      content: "READING DESK / CORE PAPER";
-      display: block;
-      margin-bottom: 22px;
-      color: #777269;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.13em;
-    }
-
-    .paper-sheet h3 {
-      max-width: 420px;
-      margin: 0 0 13px;
-      font-size: clamp(22px, 3vw, 31px);
-      line-height: 1.08;
-    }
-
-    .paper-sheet p {
-      margin: 0 0 18px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 15px;
-      line-height: 1.48;
-    }
-
-    .paper-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px 18px;
-      margin: 0 0 20px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #d4cec0;
-      color: #6f685d;
-      font: 700 11px/1.4 "Lato", sans-serif;
-      letter-spacing: .07em;
-      text-transform: uppercase;
-    }
-
-    .connection-note {
-      margin-top: 22px;
-      padding: 17px 18px;
-      border-left: 4px solid #00a68b;
-      background: #e8eee8;
-      font-family: "Lato", sans-serif;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .paper-sheet .equation {
-      display: block;
-      margin: 19px 0;
-      padding: 13px 14px;
-      border-left: 3px solid #00a68b;
-      background: rgba(0, 185, 154, 0.08);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 17px;
-      font-style: italic;
-    }
-
-    .paper-plot {
-      width: 100%;
-      height: auto;
-      margin-top: 4px;
-    }
-
-    .evidence-card {
-      align-self: start;
-      width: 100%;
-      padding: 25px 23px;
-      color: #27231d;
-      background: #f0c94f;
-      box-shadow: 6px 8px 0 rgba(45, 24, 12, .28), 0 18px 30px rgba(0, 0, 0, .32);
-      clip-path: polygon(0 0, 96% 1%, 100% 95%, 4% 100%);
-    }
-
-    .evidence-card small {
-      color: #6b5720;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .evidence-card h3 {
-      margin: 8px 0 5px;
-      font-size: 20px;
-      line-height: 1.2;
-    }
-
-    .evidence-card p {
-      margin: 0 0 12px;
-      color: #433818;
-      font-size: 14px;
-      line-height: 1.42;
-    }
-
-    .metric-row {
-      display: flex;
-      justify-content: space-between;
-      padding-top: 11px;
-      border-top: 1px solid rgba(67, 56, 24, .28);
-      color: #433818;
-      font-size: 13px;
-    }
-
-    .metric-row output {
-      color: var(--accent);
-      font-weight: 700;
-    }
-
-    .card-chart {
-      display: block;
-      width: 100%;
-      height: auto;
-      margin: 14px 0 12px;
-    }
-
-    .trace {
-      stroke-dasharray: 220;
-      stroke-dashoffset: 220;
-      animation: draw-trace 2.4s ease-out forwards;
-    }
-
-    @keyframes draw-trace { to { stroke-dashoffset: 0; } }
-
-    .stage-note {
-      position: absolute;
-      right: 4%;
-      bottom: 24px;
-      z-index: 6;
-      color: rgba(255,255,255,.72);
-      font-size: 12px;
-      letter-spacing: 0.03em;
-    }
-
-    a:focus-visible {
-      border-radius: 2px;
-      outline: 3px solid var(--accent);
-      outline-offset: 4px;
-    }
-
-    .theme-band--light a:focus-visible {
-      outline-color: var(--light-link);
-    }
-
-    @media (forced-colors: active) {
-      a { forced-color-adjust: auto; }
-      .research-stage,
-      .paper-sheet,
-      .evidence-card { forced-color-adjust: none; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .trace { animation: none; stroke-dashoffset: 0; }
-    }
-
-    @media (max-width: 620px) {
-      body { padding-left: 0; padding-top: 63px; }
-      .concept-descriptor { padding-top: 22px; }
-      .concept-descriptor time { margin-bottom: 22px; font-size: 16px; }
-      .concept-descriptor h1 { margin-bottom: 23px; }
-      .concept-descriptor p { margin-bottom: 27px; }
-      .view-tabs {
-        top: 0;
-        right: 0;
-        bottom: auto;
-        width: auto;
-        height: 63px;
-        flex-direction: row;
-        align-items: center;
-        padding: 10px 12px;
-        border-right: 0;
-        border-bottom: 1px solid #28302e;
-        overflow-x: auto;
-      }
-      .nav-brand,
-      .nav-label,
-      .nav-progress { display: none; }
-      .view-tab { flex: 0 0 auto; width: auto; grid-template-columns: 20px auto; }
-      .research-stage { grid-template-columns: 1fr; min-height: 0; }
-      .paper-sheet,
-      .evidence-card { width: 100%; }
-      .stage-note { display: none; }
-      .research-section { padding-top: 48px; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.6/dist/katex.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <nav class="view-tabs" role="tablist" aria-label="Synapse Explainer chapters" aria-orientation="vertical">
-    <span class="nav-brand">Synapse Explainer</span>
-    <span class="nav-label">Index / chapters</span>
-    <button class="view-tab" id="tab-overview" type="button" role="tab" aria-selected="true" aria-controls="overview" tabindex="0"><span class="chapter-number">01</span><span>Overview</span></button>
-    <button class="view-tab" id="tab-teach" type="button" role="tab" aria-selected="false" aria-controls="teach" tabindex="-1"><span class="chapter-number">02</span><span>Learning flow</span></button>
-    <button class="view-tab" id="tab-research" type="button" role="tab" aria-selected="false" aria-controls="research" tabindex="-1"><span class="chapter-number">03</span><span>Papers & citations</span></button>
-    <span class="nav-progress">Three chapters on temporary memory, demonstration learning, and the research connection.</span>
-  </nav>
+  <aside class="chapters" aria-label="Chapter index">
+    <strong>Synapse Explainer</strong>
+    <span class="index-label">Index / chapters</span>
+    <a href="#observe" class="active"><small>01</small> Observe</a>
+    <a href="#teach"><small>02</small> Teach</a>
+    <a href="#interfere"><small>03</small> Interfere</a>
+    <a href="#evidence"><small>04</small> Evidence</a>
+    <a href="#sources"><small>05</small> Papers</a>
+  </aside>
 
-  <div class="theme-band theme-band--dark">
-    <section class="concept-descriptor tab-panel" id="overview" role="tabpanel" aria-labelledby="tab-overview concept-title">
-      <time datetime="2026-09-05">September 5, 2026</time>
-      <h1 id="concept-title">Synapse Explainer</h1>
+  <main>
+    <header>
+      <span class="eyebrow">An explorable model of temporary memory</span>
+      <h1>Can a network acquire a skill from a few demonstrations?</h1>
+      <p>Teach a temporary association, test it, then introduce a competing example and watch the trace change.</p>
+    </header>
 
-      <p>
-        Most neural networks learn slowly by changing permanent parameters during
-        training. But some systems can also form a <span class="blue">short-term
-        memory</span> by temporarily strengthening the connections between active
-        units. The network remembers because a recent experience briefly changes
-        how its next signals travel.
-      </p>
-
-      <p>
-        In this interactive explainer, you will <a href="#teach">teach</a> a small
-        network a new symbolic rule through demonstrations, watch its connections
-        change, and test the rule on an unseen example. You will then introduce a
-        competing rule to reveal <em>memory interference</em> - the moment when
-        learning something <span class="accent">new</span> begins to disturb what
-        was just remembered.
-      </p>
-    </section>
-  </div>
-
-  <div class="theme-band theme-band--light">
-    <section class="concept-descriptor tab-panel" id="teach" role="tabpanel" aria-labelledby="tab-teach teach-title">
-      <span class="eyebrow">What you will explore</span>
-      <h2 id="teach-title">Teach it. Test it. Disrupt it.</h2>
-
-      <p>
-        Begin with two or three demonstrations of a hidden rule. The network forms
-        a temporary memory, then applies what it has learned to a <span class="blue">new
-        example</span>. Its answer is shown beside the correct result, so success is
-        visible rather than assumed.
-      </p>
-
-      <p>
-        Next, introduce a conflicting demonstration. Watch the earlier memory weaken
-        as the new association grows. This contrast makes the central lesson clear:
-        plastic connections enable rapid adaptation, but a fixed memory can become
-        <span class="accent">crowded</span> and uncertain.
-      </p>
-    </section>
-  </div>
-
-  <div class="theme-band theme-band--research">
-    <section class="research-section tab-panel" id="research" role="tabpanel" aria-labelledby="tab-research research-title">
-      <span class="eyebrow">The reading desk</span>
-      <h2 id="research-title">The papers behind the connection.</h2>
-      <div class="depth-demo" aria-labelledby="depth-demo-title">
-        <div class="demo-label">
-          <strong id="depth-demo-title">Citations and the idea they support</strong>
-          <span>Paper, annotation, connection</span>
+    <section class="workspace" id="observe">
+      <div class="stage-card">
+        <div class="stage-heading">
+          <span>WebGL2 synapse field</span>
+          <span><button id="pause" class="motion-button" aria-pressed="false">Pause motion</button><output id="phase-label" aria-live="polite">Idle</output></span>
         </div>
+        <canvas id="gl-canvas" aria-label="Shader-rendered synaptic plasticity model"></canvas>
+        <p class="canvas-note">Move across the field to disturb it · demonstrations strengthen the active path</p>
+        <p id="webgl-status" class="webgl-status" role="status" hidden></p>
+      </div>
 
-        <div class="research-stage" id="research-stage">
-          <article class="paper-sheet" aria-label="Core paper and citation">
-            <div class="paper-meta"><span>Ba et al.</span><span>NeurIPS 2016</span><span>arXiv:1610.06258</span></div>
-            <h3>Using Fast Weights to Attend to the Recent Past</h3>
-            <p>
-              Fast weights form a temporary, rapidly changing memory alongside the
-              network's slower learned parameters. That gives us a computational
-              starting point for asking how a demonstrated action could leave a
-              short-lived trace for immediate reuse.
-            </p>
-            <span class="equation math" data-tex="M_t = \lambda M_{t-1} + \eta v_t k_t^{\mathsf T}" aria-label="M sub t equals lambda M sub t minus one plus eta v sub t k sub t transpose">Mₜ = λMₜ₋₁ + ηvₜkₜᵀ</span>
-            <svg class="paper-plot" viewBox="0 0 430 128" role="img" aria-label="Recall accuracy falls as conflicting demonstrations increase">
-              <title>Recall accuracy after interference</title>
-              <line x1="34" y1="12" x2="34" y2="104" stroke="#9c978e" />
-              <line x1="34" y1="104" x2="418" y2="104" stroke="#9c978e" />
-              <path d="M34 26 C92 27, 118 31, 168 39 S245 58, 290 70 S365 92, 418 96" fill="none" stroke="#00a68b" stroke-width="4" />
-              <path d="M34 83 C105 82, 164 83, 225 84 S350 85, 418 85" fill="none" stroke="#812786" stroke-width="3" stroke-dasharray="7 6" />
-              <text x="38" y="19" fill="#555" font-size="11">recall accuracy</text>
-              <text x="279" y="121" fill="#555" font-size="11">conflicting examples →</text>
-            </svg>
-            <div class="connection-note"><strong>Our connection:</strong> treat each demonstration as an event that writes a temporary association, then test whether the association improves the next attempt and decays under delay or interference. This is our proposed synthesis, not a claim made verbatim by the cited paper.</div>
-          </article>
-
-          <aside class="evidence-card" aria-label="Related papers note">
-            <small>Related reading</small>
-            <h3>The citation trail</h3>
-            <p><strong>Miconi, Clune & Stanley (2018)</strong><br>Differentiable plasticity: training plastic neural networks with backpropagation.</p>
-            <p><strong>Schlag, Irie & Schmidhuber (2021)</strong><br>Linear Transformers Are Secretly Fast Weight Programmers.</p>
-            <div class="metric-row"><span>Shared mechanism</span><output>fast state</output></div>
-          </aside>
-
-          <span class="stage-note" aria-hidden="true">source · interpretation · testable connection</span>
+      <aside class="control-card" id="teach">
+        <span class="eyebrow">Demonstration console</span>
+        <h2>Teach a mapping</h2>
+        <label>Cue <input id="cue" value="blue circle" /></label>
+        <label>Action <input id="action" value="move left" /></label>
+        <div class="button-row">
+          <button id="demonstrate">Add demonstration</button>
+          <button id="test" class="secondary">Test recall</button>
         </div>
+        <label class="slider">Decay <output id="decay-value">0.86</output>
+          <input id="decay" type="range" min="0.50" max="1" step="0.01" value="0.86" />
+        </label>
+        <button id="conflict" class="warning">Add conflicting demonstration</button>
+        <button id="reset" class="text-button">Reset experiment</button>
+      </aside>
+    </section>
+
+    <p class="state-summary" id="state-summary" aria-live="polite">Add a demonstration to write the first temporary association.</p>
+
+    <section class="explanation" id="interfere">
+      <div>
+        <span class="eyebrow">Current update</span>
+        <div id="equation" aria-label="Fast-weight memory update">Mₜ = λMₜ₋₁ + ηvₜkₜᵀ</div>
+      </div>
+      <dl>
+        <div><dt>Memory strength</dt><dd id="strength">0%</dd></div>
+        <div><dt>Interference</dt><dd id="interference">0%</dd></div>
+        <div><dt>Demonstrations</dt><dd id="count">0</dd></div>
+      </dl>
+      <div class="matrix-readout" aria-label="Inspectable temporary association matrix">
+        <span>Temporary state M</span><code>[ <output id="matrix-memory">0.000</output>&nbsp; <output id="matrix-interference">0.000</output> ]</code>
+      </div>
+      <div class="truth-table" aria-label="Prediction compared with expected answer">
+        <span>Model prediction <strong id="prediction">not tested</strong></span>
+        <span>Expected answer <strong id="expected">move left</strong></span>
       </div>
     </section>
-  </div>
-  <script>
-    const tabs = [...document.querySelectorAll('[role="tab"]')];
-    const panels = [...document.querySelectorAll('[role="tabpanel"]')];
 
-    window.addEventListener("load", () => {
-      if (!window.katex) return;
-      document.querySelectorAll(".math[data-tex]").forEach((element) => {
-        window.katex.render(element.dataset.tex, element, {
-          displayMode: true,
-          throwOnError: false,
-          strict: "warn"
-        });
-      });
-    });
+    <section class="evidence" id="evidence">
+      <span class="eyebrow">Measurement layer</span>
+      <h2>What changes after every demonstration?</h2>
+      <p class="model-note">This deterministic teaching model uses <code>sₜ = min(1, λsₜ₋₁ + 0.32)</code>. A conflicting write scales the original trace by 0.72 and adds 0.42 to the competing trace.</p>
+      <canvas id="plot" width="900" height="320" aria-label="Memory strength and interference chart"></canvas>
+      <p class="figure-note">Solid teal: temporary association strength. Dashed violet: competing association. Values are calculated by the toy model, not inferred from the animation.</p>
+    </section>
 
-    function activateTab(tab, moveFocus = false) {
-      const panelId = tab.getAttribute("aria-controls");
+    <section class="sources" id="sources">
+      <span class="eyebrow">Research desk</span>
+      <h2>The connection, with its limits visible.</h2>
+      <div class="paper-layout">
+        <article class="paper-sheet">
+          <span>Core case study · 2025 preprint</span>
+          <h3>The Dragon Hatchling</h3>
+          <p>BDH describes inference-time working memory through synaptic plasticity and Hebbian learning. Our small association matrix is a teaching analogy, not a reproduction of the BDH architecture.</p>
+          <a href="https://arxiv.org/abs/2509.26507">Read the primary paper</a>
+        </article>
+        <aside class="paper-note">
+          <strong>Evidence labels</strong>
+          <p><b>Live:</b> the matrix update, prediction and graph.</p>
+          <p><b>Illustrative:</b> node positions, particles and glow.</p>
+          <p><b>Limitation:</b> success on this bounded task does not establish biological realism or general reasoning.</p>
+        </aside>
+      </div>
+      <div class="citation-list">
+        <a href="https://arxiv.org/abs/2508.08435"><b>Irie & Gershman (2025)</b><span>Fast weight programming and linear transformers</span></a>
+        <a href="https://openreview.net/forum?id=XDzS9lCfQc"><b>Zhmoginov et al. (2024)</b><span>Learning Fast and Slow</span></a>
+        <a href="https://arxiv.org/abs/2510.21908"><b>Chaudhary (2025, preprint)</b><span>Hebbian and gradient-based plasticity for rapid adaptation</span></a>
+      </div>
+    </section>
+  </main>
 
-      tabs.forEach((item) => {
-        const active = item === tab;
-        item.setAttribute("aria-selected", String(active));
-        item.tabIndex = active ? 0 : -1;
-      });
-
-      panels.forEach((panel) => {
-        panel.hidden = panel.id !== panelId;
-      });
-
-      if (moveFocus) tab.focus();
-      history.replaceState(null, "", `#${panelId}`);
-    }
-
-    tabs.forEach((tab, index) => {
-      tab.addEventListener("click", () => activateTab(tab));
-      tab.addEventListener("keydown", (event) => {
-        let next = null;
-        if (event.key === "ArrowRight" || event.key === "ArrowDown") next = tabs[(index + 1) % tabs.length];
-        if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = tabs[(index - 1 + tabs.length) % tabs.length];
-        if (event.key === "Home") next = tabs[0];
-        if (event.key === "End") next = tabs[tabs.length - 1];
-        if (next) {
-          event.preventDefault();
-          activateTab(next, true);
-        }
-      });
-    });
-
-    document.querySelectorAll('a[href^="#"]').forEach((link) => {
-      link.addEventListener("click", (event) => {
-        const target = link.getAttribute("href").slice(1);
-        const tab = tabs.find((item) => item.getAttribute("aria-controls") === target);
-        if (tab) {
-          event.preventDefault();
-          activateTab(tab, true);
-        }
-      });
-    });
-
-    const requestedPanel = location.hash.slice(1);
-    const initialTab = tabs.find((tab) => tab.getAttribute("aria-controls") === requestedPanel) || tabs[0];
-    activateTab(initialTab);
-
-  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.18.6/dist/katex.min.js"></script>
+  <script type="module" src="src/app.js"></script>
 </body>
 </html>
 

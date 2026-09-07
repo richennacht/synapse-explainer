@@ -1,123 +1,28 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="An approachable interactive article about temporary neural memory and interference." />
-  <title>Synapse Explainer — Learning in the Moment</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <button class="index-trigger" id="index-trigger" aria-label="Open article index" aria-expanded="false" aria-controls="index-panel"><span></span></button>
-  <div class="drawer-shade" id="drawer-shade" hidden></div>
-  <aside class="index-panel" id="index-panel" aria-label="Article index" aria-hidden="true">
-    <div class="index-head"><strong>Synapse Explainer</strong><button id="index-close" aria-label="Close article index">×</button></div>
-    <p>Article index</p>
-    <nav>
-      <a href="#idea" class="active"><small>01</small><span>The central idea</span></a>
-      <a href="#write"><small>02</small><span>Writing a memory</span></a>
-      <a href="#interference"><small>03</small><span>When memories compete</span></a>
-      <a href="#mechanism"><small>04</small><span>The mechanism</span></a>
-      <a href="#evidence"><small>05</small><span>Evidence and limits</span></a>
-    </nav>
-  </aside>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="A visual article about temporary neural memory."><title>Synapse Explainer</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css"></head><body>
+<nav class="chapter-nav" aria-label="Article chapters"><a href="#opening" class="active" aria-label="Opening"></a><a href="#slow" aria-label="Slow and fast memory"></a><a href="#write" aria-label="Writing"></a><a href="#repeat" aria-label="Repetition"></a><a href="#retain" aria-label="Retention"></a><a href="#read" aria-label="Reading"></a><a href="#compete" aria-label="Competition"></a><a href="#order" aria-label="Order"></a><a href="#capacity" aria-label="Capacity"></a><a href="#noise" aria-label="Noise"></a><a href="#evidence" aria-label="Evidence"></a></nav>
+<main><article>
+<header id="opening"><time>September 8, 2026</time><h1>How can a network remember an example?</h1><p class="lead">A visual introduction to temporary synaptic memory, built one small idea at a time.</p></header>
+<p>A trained neural network normally keeps the same parameters while it answers a question. Yet a useful example can change what the network does next. To understand how, we need to separate two kinds of memory.</p>
 
-  <main>
-    <article>
-      <header id="idea">
-        <time datetime="2026-09-08">September 8, 2026</time>
-        <h1>Learning in the moment</h1>
-        <p class="standfirst">A neural network usually learns during training. But what if a new example could leave a temporary trace—strong enough to guide the very next decision?</p>
-      </header>
+<section id="slow"><div class="section-mark">01</div><h2>Two speeds of learning</h2><p>Slow parameters preserve knowledge acquired during training. Temporary state records what happened in the current session. Move the slider to see which part changes after a new demonstration.</p><div class="demo" data-demo="speeds"><canvas aria-label="Slow parameters compared with temporary session state"></canvas><label><span>New demonstrations</span><output>0</output><input type="range" min="0" max="5" step="1" value="0"></label></div><p class="note">Only the temporary state responds. The trained parameters remain fixed throughout this article.</p></section>
 
-      <p>Imagine being shown a blue circle and told to move left. You do not need months of practice; for a short while, the cue and the action are linked in memory. Some machine-learning systems use an analogous idea: they preserve a rapidly changing state alongside their slowly trained parameters.</p>
-      <p>This article builds that intuition with one deliberately small model. It does not reproduce a brain or a complete research architecture. It lets us inspect one claim precisely: <strong>compatible demonstrations strengthen a temporary association, while time and competing demonstrations can weaken its recall.</strong></p>
+<section id="write"><div class="section-mark">02</div><h2>A demonstration leaves a trace</h2><p>The cue and action become active together. This creates an association between them. Increase the write strength and follow the path from the blue cue to the left action.</p><div class="demo" data-demo="write"><canvas aria-label="A cue writing an association to an action"></canvas><label><span>Write strength</span><output>0.45</output><input type="range" min="0" max="1" step="0.01" value="0.45"></label></div><p class="note">Path thickness represents the stored association. It is a direct view of the value, not a decorative animation.</p></section>
 
-      <section id="write">
-        <span class="kicker">First experiment</span>
-        <h2>Write a temporary memory</h2>
-        <p>The diagram below begins with an empty memory. Press <em>Add demonstration</em> once. The blue-circle cue writes strength into the “move left” route. Press it again and the same route becomes easier to recall.</p>
+<section id="repeat"><div class="section-mark">03</div><h2>Repetition strengthens recall</h2><p>One example creates a weak trace. Compatible examples add evidence to the same route. Slide from one to five examples and compare the resulting strength.</p><div class="demo" data-demo="repeat"><canvas aria-label="Association strength after repeated compatible examples"></canvas><label><span>Compatible examples</span><output>1</output><input type="range" min="1" max="5" step="1" value="1"></label></div><p class="note">The trace grows quickly, then approaches a ceiling. More evidence cannot push strength beyond 100 percent.</p></section>
 
-        <figure class="simulation-card">
-          <div class="figure-title"><span>Live association model</span><output id="phase-label" aria-live="polite">Ready</output></div>
-          <div class="canvas-wrap">
-            <canvas id="gl-canvas" aria-label="Cue, temporary memory, and two competing action paths"></canvas>
-            <span class="canvas-label cue">blue circle<small>cue</small></span>
-            <span class="canvas-label memory">temporary memory<small>session state</small></span>
-            <span class="canvas-label action-a">move left<small>intended action</small></span>
-            <span class="canvas-label action-b">move right<small>competing action</small></span>
-          </div>
-          <div class="controls" aria-label="Memory experiment controls">
-            <button id="demonstrate">Add demonstration</button>
-            <button id="test" class="quiet">Test recall</button>
-            <button id="reset" class="text-button">Reset</button>
-          </div>
-          <div class="readout" aria-live="polite">
-            <div><span>Left association</span><strong id="strength">0%</strong></div>
-            <div><span>Right association</span><strong id="interference">0%</strong></div>
-            <div><span>Prediction</span><strong id="prediction">Not tested</strong></div>
-          </div>
-          <p class="figure-caption" id="state-summary">The temporary memory is empty. No action has an advantage yet.</p>
-          <p id="webgl-status" class="fallback" role="status" hidden></p>
-        </figure>
+<section id="retain"><div class="section-mark">04</div><h2>Temporary memory fades</h2><p>A short-term trace is useful because it can change. The same flexibility also means it can fade. Increase the delay to see how much of the original association remains.</p><div class="demo" data-demo="retain"><canvas aria-label="Temporary association decaying over time"></canvas><label><span>Delay steps</span><output>0</output><input type="range" min="0" max="10" step="1" value="0"></label></div><p class="note">Every step keeps 86 percent of the previous value. This retention rate is an exposed teaching assumption.</p></section>
 
-        <p>The lines are not decorative. Their brightness and width are calculated from the two association values shown underneath. Testing simply selects the stronger route; when neither route is stronger, the honest answer is “uncertain.”</p>
-      </section>
+<section id="read"><div class="section-mark">05</div><h2>A cue reads the stored route</h2><p>Memory matters only when it changes a decision. Adjust the cue match. A close match activates the stored route strongly; a poor match produces an uncertain read.</p><div class="demo" data-demo="read"><canvas aria-label="Cue similarity controlling memory readout"></canvas><label><span>Cue match</span><output>72%</output><input type="range" min="0" max="1" step="0.01" value="0.72"></label></div><p class="note">The displayed confidence equals stored strength multiplied by cue match. Both inputs remain visible.</p></section>
 
-      <section id="interference">
-        <span class="kicker">Second experiment</span>
-        <h2>When a new example contradicts the old one</h2>
-        <p>Now suppose someone uses the same blue circle to demonstrate “move right.” The new example competes for the same cue. Before pressing the button, make a prediction: will the original route remain stronger?</p>
+<section id="compete"><div class="section-mark">06</div><h2>Conflicting examples compete</h2><p>Now the same cue points to two different actions. Shift the balance between the original example and the contradiction. The stronger route determines recall.</p><div class="demo" data-demo="compete"><canvas aria-label="Two action associations competing for one cue"></canvas><label><span>Conflicting evidence</span><output>35%</output><input type="range" min="0" max="1" step="0.01" value="0.35"></label></div><p class="note">At the midpoint the model is uncertain. On either side it selects the route with more evidence.</p></section>
 
-        <div class="experiment-strip">
-          <div><span>Retention between examples</span><strong><output id="decay-value">0.86</output></strong></div>
-          <input id="decay" aria-label="Retention between examples" type="range" min="0.50" max="1" step="0.01" value="0.86" />
-          <button id="conflict">Add “move right” demonstration</button>
-        </div>
-        <p class="aside-note">Retention controls how much of the previous temporary state survives before a compatible example is added. A value of 1 keeps all of it; 0.5 keeps half.</p>
+<section id="order"><div class="section-mark">07</div><h2>Order changes what survives</h2><p>Temporary updates are sequential. Earlier examples have more time to fade. Move the latest example through the sequence and watch the balance shift.</p><div class="demo" data-demo="order"><canvas aria-label="Effect of demonstration order on final recall"></canvas><label><span>Position of the conflicting example</span><output>2 of 5</output><input type="range" min="1" max="5" step="1" value="2"></label></div><p class="note">A contradiction placed later has greater influence because fewer decay steps follow it.</p></section>
 
-        <figure class="plot-card">
-          <canvas id="plot" width="800" height="300" aria-label="History of both association strengths"></canvas>
-          <figcaption>Solid teal tracks the intended association. Dashed plum tracks the competing association. Both are calculated from the model state after every step.</figcaption>
-        </figure>
-      </section>
+<section id="capacity"><div class="section-mark">08</div><h2>One memory has limited room</h2><p>As more cue-action pairs share the same temporary state, their traces begin to overlap. Increase the number stored and inspect how clearly each route remains separated.</p><div class="demo" data-demo="capacity"><canvas aria-label="Memory capacity and overlap between stored associations"></canvas><label><span>Stored associations</span><output>3</output><input type="range" min="1" max="9" step="1" value="3"></label></div><p class="note">Overlap is a limitation of this compact representation. It is not proof of a fixed capacity in every fast-weight system.</p></section>
 
-      <section id="mechanism">
-        <span class="kicker">Under the surface</span>
-        <h2>The rule, one piece at a time</h2>
-        <p>There is no mysterious equation behind the interaction. Each compatible demonstration performs two understandable operations:</p>
-        <div class="mechanism-steps">
-          <div><b>1</b><p><strong>Keep part of the old memory.</strong><br><span>old strength × retention</span></p></div>
-          <div><b>2</b><p><strong>Add the new evidence.</strong><br><span>retained strength + 0.32</span></p></div>
-          <div><b>3</b><p><strong>Stop at full strength.</strong><br><span>the result cannot exceed 1</span></p></div>
-        </div>
-        <div class="equation-plain"><span>new strength</span><b>=</b><span>old strength × retention</span><b>+</b><span>new evidence</span></div>
-        <p>A conflicting example reduces the original route to 72% of its current value and adds 0.42 to the competing route. These constants are teaching choices, not fitted biological measurements. They make strengthening and interference visible without pretending to be a complete neural model.</p>
-      </section>
+<section id="noise"><div class="section-mark">09</div><h2>Strong traces resist noisy cues</h2><p>A new cue is rarely identical to its demonstration. Add noise to the cue and compare a weak one-example memory with a stronger repeated memory.</p><div class="demo" data-demo="noise"><canvas aria-label="Weak and strong memories under increasing cue noise"></canvas><label><span>Cue noise</span><output>20%</output><input type="range" min="0" max="1" step="0.01" value="0.20"></label></div><p class="note">The strong trace keeps a larger margin. This is toy-model behavior, not a reported benchmark result.</p></section>
 
-      <section id="evidence">
-        <span class="kicker">Research connection</span>
-        <h2>What the papers support—and what they do not</h2>
-        <p>Fast-weight and synaptic-plasticity research motivates the separation between slow trained parameters and quickly changing state. The Dragon Hatchling studies inference-time working memory through synaptic plasticity; related work connects fast weights with linear attention and rapid adaptation.</p>
-        <div class="evidence-box">
-          <div><span>Computed live</span><p>State updates, prediction, numeric values, and the history chart.</p></div>
-          <div><span>Visual explanation</span><p>Node placement and path rendering. These show the computed values but are not scientific measurements.</p></div>
-          <div><span>Important limit</span><p>This toy model does not establish biological realism or reproduce the full BDH or BDH-CQ architecture.</p></div>
-        </div>
-        <div class="references">
-          <a href="https://arxiv.org/abs/2509.26507"><small>Primary paper · 2025 preprint</small><strong>The Dragon Hatchling</strong><span>Inference-time working memory through synaptic plasticity</span></a>
-          <a href="https://arxiv.org/abs/2508.08435"><small>Related work · 2025</small><strong>Irie &amp; Gershman</strong><span>Fast-weight programming and linear transformers</span></a>
-          <a href="https://openreview.net/forum?id=XDzS9lCfQc"><small>Related work · 2024</small><strong>Learning Fast and Slow</strong><span>How slow and rapid adaptation can coexist</span></a>
-        </div>
-      </section>
-
-      <footer>Built as an inspectable teaching model. No large model is trained or evaluated in this browser experience.</footer>
-    </article>
-  </main>
-  <script type="module" src="src/app.js"></script>
-</body>
-</html>
+<section id="evidence"><div class="section-mark">10</div><h2>What this model can claim</h2><p>The final comparison separates the live model from the research connection. Move across the scale to inspect which statements are demonstrated here and which require evidence from full architectures.</p><div class="demo" data-demo="claims"><canvas aria-label="Claims supported by the toy model compared with broader research claims"></canvas><label><span>Claim scope</span><output>Toy model</output><input type="range" min="0" max="2" step="1" value="0"></label></div><div class="references"><p><strong>Demonstrated here:</strong> a temporary state can store, decay, and overwrite cue-action associations under the stated equations.</p><p><strong>Supported by primary research:</strong> fast weights and synaptic-plasticity mechanisms can provide rapidly changing state in larger learned systems.</p><p><strong>Not established here:</strong> biological realism, full BDH or BDH-CQ reproduction, or general reasoning ability.</p></div><p class="sources"><a href="https://arxiv.org/abs/2509.26507">The Dragon Hatchling</a> · <a href="https://arxiv.org/abs/2508.08435">Fast weight programming</a> · <a href="https://openreview.net/forum?id=XDzS9lCfQc">Learning Fast and Slow</a></p></section>
+<footer>Synapse Explainer is a deterministic teaching model. All measured values are calculated in the browser.</footer>
+</article></main><script type="module" src="src/app.js"></script></body></html>
 

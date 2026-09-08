@@ -23,10 +23,10 @@ section {
   padding-bottom: 60px;
 }
 
-.chapter-nav a[href="#slow"]::after { content: "Synapses"; }
+.chapter-nav a[href="#slow"]::after { content: "Digit pathway"; }
 .chapter-nav a[href="#write"]::after { content: "Hebbian learning"; }
-.chapter-nav a[href="#repeat"]::after { content: "Memory formation"; }
-.chapter-nav a[href="#retain"]::after { content: "Fast weights"; }
+.chapter-nav a[href="#repeat"]::after { content: "Pattern memory"; }
+.chapter-nav a[href="#retain"]::after { content: "Short-term dynamics"; }
 
 .formula {
   display: flex;

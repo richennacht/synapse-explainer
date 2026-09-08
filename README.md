@@ -13,6 +13,7 @@ The primary learner is a technically literate undergraduate, early graduate stud
 Install dependencies, then run the Next.js development server.
 
 ```sh
+npm install
 npm test
 npm run dev
 ```

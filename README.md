@@ -19,7 +19,7 @@ npx serve .
 
 ## Architecture
 
-`src/app.js` contains the currently published deterministic Canvas 2D teaching demonstrations. The opening classifier recomputes template-similarity scores from an editable 5 by 7 input and adds a bounded fast trace to the route for digit 2. `src/simulation.js` contains the separately tested cue-action memory equations. `src/renderer.js` is an experimental WebGL renderer retained in the repository, but it is not used by the published article.
+The published application now uses Next.js and React. `lib/memory.js` is the framework-independent source of truth for the bounded plastic trace and the KV-versus-fixed-state comparison. `components/MemoryScene.js` renders the same state as a Three.js scene, with a computed Canvas 2D fallback when WebGL is unavailable. The earlier prototype remains in `src/` for provenance but is not loaded by the Next.js application.
 
 ## Evidence labels
 
@@ -30,7 +30,7 @@ npx serve .
 
 This is a reduced teaching model. It does not implement the full BDH or BDH-CQ architecture, establish biological realism, or demonstrate general reasoning. AI assisted code, writing, and visual iteration; outputs were reviewed and deterministic state logic is covered by local tests. See `LICENSES.md` and `AUDIENCE_AND_RUBRIC.md`.
 
-## Planned WebGL architecture
+## WebGL architecture
 
-The next renderer iteration will adapt the walkthrough, camera, block, line, text, and data-flow architecture of Brendan Bycroft's MIT-licensed `bbycroft/llm-viz`. The GPT-specific model, prose, branding, and assets will not be reused. Synapse Explainer will retain its own associative-memory engine, equations, chapter content, monochrome visual system, and project assets. Until that port lands, the published site remains the original Canvas 2D implementation described above.
+The scene adopts the persistent spatial comparison and guided-explainer architecture demonstrated by Brendan Bycroft's MIT-licensed `bbycroft/llm-viz`. This implementation is original Three.js code rather than copied GPT-specific renderer code. The GPT model, prose, branding, and assets are not reused. Synapse Explainer retains its own memory engine, equations, chapter content, monochrome visual system, and project assets.
 

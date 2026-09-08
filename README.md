@@ -10,16 +10,16 @@ The primary learner is a technically literate undergraduate, early graduate stud
 
 ## Run and test
 
-The site has no build step. Serve this directory with any static web server and open `index.html`.
+Install dependencies, then run the Next.js development server.
 
 ```sh
 npm test
-npx serve .
+npm run dev
 ```
 
 ## Architecture
 
-The published application now uses Next.js and React. `lib/memory.js` is the framework-independent source of truth for the bounded plastic trace and the KV-versus-fixed-state comparison. `components/MemoryScene.js` renders the same state as a Three.js scene, with a computed Canvas 2D fallback when WebGL is unavailable. The earlier prototype remains in `src/` for provenance but is not loaded by the Next.js application.
+The application uses Next.js and React. `lib/memory.js` is the framework-independent source of truth for the bounded plastic trace and KV-versus-fixed-state comparison. `components/ArchitectureViz.js` renders four small Three.js explainers: the model-stack comparison, KV-cache growth, a Hebbian connection update, and a BDH-style particle graph. The earlier prototype remains in `src/` for provenance but is not loaded by the Next.js application.
 
 ## Evidence labels
 
@@ -32,5 +32,5 @@ This is a reduced teaching model. It does not implement the full BDH or BDH-CQ a
 
 ## WebGL architecture
 
-The scene adopts the persistent spatial comparison and guided-explainer architecture demonstrated by Brendan Bycroft's MIT-licensed `bbycroft/llm-viz`. This implementation is original Three.js code rather than copied GPT-specific renderer code. The GPT model, prose, branding, and assets are not reused. Synapse Explainer retains its own memory engine, equations, chapter content, monochrome visual system, and project assets.
+The model scenes adapt the block-stack, spatial tensor, camera, and data-flow visual vocabulary demonstrated by Brendan Bycroft's MIT-licensed `bbycroft/llm-viz`. The implementation is original Three.js code and is limited to model-visualization primitives. The article, controls, BDH graph, equations, monochrome design, and teaching sequence are specific to Synapse Explainer.
 

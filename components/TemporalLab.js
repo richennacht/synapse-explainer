@@ -1,0 +1,17 @@
+"use client";
+
+import { runTemporalMemory } from "../lib/temporal";
+
+export default function TemporalLab({ cue, repetitions, plasticity, retention, view }) {
+  const m = runTemporalMemory({ cue, repetitions, plasticity, retention });
+  if (view === "timeline") return <figure className="micro-demo"><div className="timeline" aria-label="A four-step traffic sensor time series"><Time n="1" title={`${cue} ambulance`} values={m.input}/><Time n="2" title="camera blocked" values={[0,0,0]}/><Time n="3" title="clear crossing" values={[0,0,0]}/><Time n="4" title="choose phase" values={m.goInput}/></div><figcaption>The approach direction must survive a temporary sensor occlusion.</figcaption></figure>;
+  if (view === "network") return <figure className="micro-demo"><svg className="network-svg" viewBox="0 0 760 300" role="img" aria-label="Three traffic inputs, three memory units and two signal phases with visible activations"><Layer x="90" labels={["north sensor","east sensor","phase trigger"]} values={m.input}/><Layer x="380" labels={["north trace","east trace","clearance"]} values={m.hidden}/><Layer x="670" labels={["north phase","east phase"]} values={m.target}/>{[70,150,230].flatMap((y,i)=>[70,190].map((oy,j)=><line key={`${i}-${j}`} x1="110" y1={y} x2="360" y2={[70,150,230][i]} className={m.input[i]&&i===j?"signal":"quiet"}/>))}<path d="M400 70 C500 70 540 70 650 70" className={cue==="north"?"signal":"quiet"}/><path d="M400 150 C500 150 540 190 650 190" className={cue==="east"?"signal":"quiet"}/></svg><figcaption>Circle fill is the activation value. Nothing is hidden.</figcaption></figure>;
+  if (view === "matrix") return <figure className="micro-demo calculation"><div className="matrix-equation"><Matrix title="old H" data={m.writes.at(-2) || [[0,0],[0,0]]}/><b>× {retention.toFixed(2)}</b><span>+</span><div><small>η × cue × action</small><strong>{plasticity.toFixed(2)} × [{m.hidden.slice(0,2).join(", ")}]ᵀ × [{m.target.join(", ")}]</strong></div><span>=</span><Matrix title="new H" data={m.H}/></div><figcaption>Each of the four cells is calculated from the same visible rule.</figcaption></figure>;
+  return <figure className="micro-demo recall"><div className="recall-flow"><Matrix title="stored H" data={m.H}/><span>×</span><Vector title="remembered cue" data={m.hidden.slice(0,2)}/><span>=</span><Vector title="action scores" data={m.output}/><strong>{m.decision}</strong></div><figcaption>The larger score selects the action when GO arrives.</figcaption></figure>;
+}
+
+function Time({n,title,values}) { return <div className="time-step"><small>t = {n}</small><b>{title}</b><div>{values.map((v,i)=><i key={i} style={{opacity:.15+.85*v}} />)}</div></div>; }
+function Layer({x,labels,values}) { return <g>{labels.map((label,i)=><g key={label}><circle cx={x} cy={70+i*80} r="22" style={{fill:`rgba(35,35,35,${.12+.88*values[i]})`}}/><text x={x} y={74+i*80} textAnchor="middle" className={values[i]>.5?"node-value active":"node-value"}>{values[i].toFixed(1)}</text><text x={x} y={108+i*80} textAnchor="middle" className="node-label">{label}</text></g>)}</g>; }
+function Matrix({title,data}) { return <div className="math-object"><small>{title}</small><div className="matrix">{data.flat().map((v,i)=><i key={i}>{Number(v).toFixed(2)}</i>)}</div></div>; }
+function Vector({title,data}) { return <div className="math-object"><small>{title}</small><div className="vector">{data.map((v,i)=><i key={i}>{Number(v).toFixed(2)}</i>)}</div></div>; }
+

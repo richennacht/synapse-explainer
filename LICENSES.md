@@ -6,7 +6,9 @@
 - Dark walnut texture: generated project asset. It contains no research data.
 - Research examples: synthetic and deterministic. No model weights, participant data, or external datasets are shipped.
 - Citations link to their primary publisher, arXiv, or OpenReview pages. Papers remain under their respective authors' terms.
-- Planned renderer architecture reference: Brendan Bycroft's `bbycroft/llm-viz`, MIT licensed. No source from that project is included in the current published build. If adapted code is introduced, its MIT notice and attribution must ship with the repository.
+- Renderer architecture reference: Brendan Bycroft's `bbycroft/llm-viz`, MIT licensed. The current Three.js scene is original code informed by its persistent-scene and walkthrough approach; no GPT-specific source or assets are copied.
+- Three.js 0.180.0: MIT licensed.
+- Next.js and React: MIT licensed.
 
 ## What is computed
 

@@ -6,6 +6,7 @@
 - Dark walnut texture: generated project asset. It contains no research data.
 - Research examples: synthetic and deterministic. No model weights, participant data, or external datasets are shipped.
 - Citations link to their primary publisher, arXiv, or OpenReview pages. Papers remain under their respective authors' terms.
+- Planned renderer architecture reference: Brendan Bycroft's `bbycroft/llm-viz`, MIT licensed. No source from that project is included in the current published build. If adapted code is introduced, its MIT notice and attribution must ship with the repository.
 
 ## What is computed
 

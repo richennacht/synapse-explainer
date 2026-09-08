@@ -30,3 +30,7 @@ npx serve .
 
 This is a reduced teaching model. It does not implement the full BDH or BDH-CQ architecture, establish biological realism, or demonstrate general reasoning. AI assisted code, writing, and visual iteration; outputs were reviewed and deterministic state logic is covered by local tests. See `LICENSES.md` and `AUDIENCE_AND_RUBRIC.md`.
 
+## Planned WebGL architecture
+
+The next renderer iteration will adapt the walkthrough, camera, block, line, text, and data-flow architecture of Brendan Bycroft's MIT-licensed `bbycroft/llm-viz`. The GPT-specific model, prose, branding, and assets will not be reused. Synapse Explainer will retain its own associative-memory engine, equations, chapter content, monochrome visual system, and project assets. Until that port lands, the published site remains the original Canvas 2D implementation described above.
+

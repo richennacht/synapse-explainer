@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ArchitectureViz from "../components/ArchitectureViz";
 import TemporalLab from "../components/TemporalLab";
 import { runTemporalMemory } from "../lib/temporal";
@@ -10,13 +10,23 @@ const parts=[
  {id:"model",number:"PART 2",title:"Put memory inside a small model",short:"Small model"},
  {id:"bdh",number:"PART 3",title:"Find the mechanism inside BDH",short:"BDH"}
 ];
+const sectionLinks={
+ basics:[["basics-signals","Signals"],["basics-trace","Temporary trace"],["basics-rule","Hebbian rule"]],
+ model:[["model-sequence","Sequence"],["model-activation","Activations"],["model-memory","Write and recall"]],
+ bdh:[["bdh-graph","Graph"],["bdh-memory","Working state"],["bdh-evidence","Evidence"]]
+};
 
 export default function Page(){
- const [part,setPart]=useState("basics");
+ const [part,setPart]=useState("basics"),[drawerOpen,setDrawerOpen]=useState(false);
  const [coactivity,setCoactivity]=useState(2),[cue,setCue]=useState("north"),[repetitions,setRepetitions]=useState(2),[plasticity,setPlasticity]=useState(.35),[retention,setRetention]=useState(.9);
  const model={cue,repetitions,plasticity,retention}; const result=runTemporalMemory(model);
+ useEffect(()=>{const close=e=>e.key==="Escape"&&setDrawerOpen(false);addEventListener("keydown",close);return()=>removeEventListener("keydown",close)},[]);
+ const choosePart=id=>{setPart(id);setDrawerOpen(false);scrollTo({top:0,behavior:"smooth"})};
  return <>
-  <header className="chapter-bar"><a className="wordmark" href="#top">Synapse Explainer</a><div className="part-tabs" role="tablist" aria-label="Learning chapters">{parts.map(p=><button key={p.id} id={`${p.id}-tab`} role="tab" aria-selected={part===p.id} aria-controls={`${p.id}-panel`} onClick={()=>{setPart(p.id);scrollTo({top:0,behavior:"smooth"})}}><small>{p.number}</small><span>{p.short}</span></button>)}</div></header>
+  <button className="drawer-trigger" aria-label="Open chapter navigation" aria-expanded={drawerOpen} aria-controls="chapter-drawer" onClick={()=>setDrawerOpen(v=>!v)}><span/><i/></button>
+  <aside className="chapter-drawer" id="chapter-drawer" aria-hidden={!drawerOpen}><div className="drawer-heading"><span>Synapse Explainer</span><button aria-label="Close chapter navigation" onClick={()=>setDrawerOpen(false)}>×</button></div><p>Three-part learning path</p><div className="drawer-parts">{parts.map(p=><button key={p.id} aria-current={part===p.id?"page":undefined} onClick={()=>choosePart(p.id)}><small>{p.number}</small><b>{p.title}</b><span>{part===p.id?"Currently reading":"Open chapter"}</span></button>)}</div></aside>
+  {drawerOpen&&<button className="drawer-scrim" aria-label="Close chapter navigation" onClick={()=>setDrawerOpen(false)}/>} 
+  <nav className="section-index" aria-label={`${parts.find(p=>p.id===part).short} sections`}>{sectionLinks[part].map(([id,label],index)=><button key={id} onClick={()=>document.querySelector(`#${part}-panel`)?.querySelectorAll("section")[index]?.scrollIntoView({behavior:"smooth"})}><i/>{label}</button>)}</nav>
   <main className="chapter-main" id="top">
    <article id="basics-panel" role="tabpanel" aria-labelledby="basics-tab" hidden={part!=="basics"}><Intro number="Part one of three" title="A connection can remember what just happened" lead="Begin with two neurons. See activity change one connection, then give that changing connection a name."/>
     <section><span className="number">01</span><h2>Signals travel between neurons</h2><p>A neuron receives signals, combines them, and may send a new signal onward. The junction between two neurons is called a synapse. Its strength controls how much influence the first neuron has on the second.</p><div className="two-neuron-demo"><div className="neuron active">1.0<span>sender</span></div><div className="synapse-line" style={{height:2+coactivity*2}}><b>{(.2+coactivity*.12).toFixed(2)}</b></div><div className="neuron active">1.0<span>receiver</span></div></div></section>

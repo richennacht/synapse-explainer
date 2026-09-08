@@ -19,14 +19,14 @@ npx serve .
 
 ## Architecture
 
-`src/simulation.js` is the deterministic source of truth. `src/app.js` connects controls, numeric state, KaTeX, and the Canvas 2D history chart. `src/renderer.js` sends the same state into raw WebGL2 uniforms and renders the network with GLSL ES 3.00 shaders. The renderer never determines the measured result.
+`src/app.js` contains the currently published deterministic Canvas 2D teaching demonstrations. The opening classifier recomputes template-similarity scores from an editable 5 by 7 input and adds a bounded fast trace to the route for digit 2. `src/simulation.js` contains the separately tested cue-action memory equations. `src/renderer.js` is an experimental WebGL renderer retained in the repository, but it is not used by the published article.
 
 ## Evidence labels
 
-- **Live:** state updates, recall decisions, matrix values, and history plot.
-- **Synthetic:** cue/action examples and experiment history.
-- **Illustrative:** graph layout, motion, additive glow, and pointer disturbance.
-- **External:** KaTeX, Lato, and linked primary papers.
+- **Live:** every slider update, editable digit pixel, template-similarity score, fast-trace contribution, and displayed decision.
+- **Synthetic:** digit templates, cue-action examples, and the 5 by 5 arrow pattern.
+- **Illustrative:** node placement, connection routing, and staged views of matrix operations.
+- **External:** Lato and linked primary papers.
 
 This is a reduced teaching model. It does not implement the full BDH or BDH-CQ architecture, establish biological realism, or demonstrate general reasoning. AI assisted code, writing, and visual iteration; outputs were reviewed and deterministic state logic is covered by local tests. See `LICENSES.md` and `AUDIENCE_AND_RUBRIC.md`.
 

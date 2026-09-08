@@ -30,6 +30,7 @@ section {
 .chapter-nav a[href="#write"]::after { content: "Hebbian learning"; }
 .chapter-nav a[href="#repeat"]::after { content: "Pattern memory"; }
 .chapter-nav a[href="#retain"]::after { content: "Short-term dynamics"; }
+.chapter-nav a[href="#research"]::after { content: "Research evidence"; }
 
 .formula {
   display: flex;

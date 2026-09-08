@@ -8,6 +8,8 @@
   background: transparent;
 }
 
+.demo[data-demo="speeds"] canvas { cursor: crosshair; }
+
 .demo label {
   width: calc(100% - 72px);
   margin-top: 10px;

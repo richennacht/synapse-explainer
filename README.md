@@ -32,5 +32,4 @@ This is a reduced teaching model. It does not implement the full BDH or BDH-CQ a
 
 ## WebGL architecture
 
-The model scenes adapt the block-stack, spatial tensor, camera, and data-flow visual vocabulary demonstrated by Brendan Bycroft's MIT-licensed `bbycroft/llm-viz`. The implementation is original Three.js code and is limited to model-visualization primitives. The article, controls, BDH graph, equations, monochrome design, and teaching sequence are specific to Synapse Explainer.
-
+The Chapter 2 nanoGPT scene uses a custom WebGL2 shader pipeline, tensor-volume geometry, perspective camera, and orbit interaction adapted from the technical approach demonstrated by Brendan Bycroft's MIT-licensed `bbycroft/llm-viz`. Other small architecture scenes use Three.js. The article, memory-state geometry, controls, equations, monochrome design, and teaching sequence are specific to Synapse Explainer.

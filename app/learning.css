@@ -3,4 +3,11 @@
 
 .forgetting-curve{margin:42px 0 0}.forgetting-curve figcaption{margin-bottom:18px}.forgetting-curve .grid{stroke:#e1e1e1;stroke-width:1}.forgetting-curve .current-delay{stroke:#999;stroke-width:1;stroke-dasharray:4 4}.forgetting-curve .forget-series{fill:none;stroke-width:3}.forgetting-curve .forget-series.s0{stroke:#222}.forgetting-curve .forget-series.s1{stroke:#777}.forgetting-curve .forget-series.s2{stroke:#b5b5b5}.forgetting-curve .forget-point{stroke:var(--paper);stroke-width:2}.forgetting-curve .forget-point.s0{fill:#222}.forgetting-curve .forget-point.s1{fill:#777}.forgetting-curve .forget-point.s2{fill:#b5b5b5}.forgetting-curve .series-label.s0{fill:#222}.forgetting-curve .series-label.s1{fill:#666}.forgetting-curve .series-label.s2{fill:#999}.forgetting-curve .delay-label{fill:#555}.forgetting-curve>p{display:flex;justify-content:space-between;margin:8px 0 0!important;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}.forgetting-curve>p b{color:var(--ink)}
 @media(max-width:620px){.forgetting-curve>p{display:block}.forgetting-curve>p b{margin:0 3px}}
-
+.nanogpt-webgl{position:relative;width:100%;height:620px;margin:28px 0 14px;background:#f6f6f3;overflow:hidden;cursor:grab;touch-action:none}
+.nanogpt-webgl:active{cursor:grabbing}
+.nanogpt-webgl canvas{display:block;width:100%;height:100%}
+.nanogpt-webgl figcaption{position:absolute;left:18px;bottom:14px;margin:0;color:#888;font-size:12px;letter-spacing:.01em}
+.webgl-key,.webgl-stage{position:absolute;top:16px;display:flex;gap:10px;align-items:baseline;font-size:11px;color:#858585;pointer-events:none}
+.webgl-key{left:18px}.webgl-key b{font-size:13px;color:#222}.webgl-stage{right:18px;flex-direction:column;align-items:flex-end;gap:2px}.webgl-stage b{font-size:13px;color:#222;font-weight:600}
+.webgl-timeline{margin-top:0}
+@media(max-width:700px){.nanogpt-webgl{height:460px}.webgl-key span{display:none}.webgl-stage{top:auto;bottom:34px}.nanogpt-webgl figcaption{max-width:55%}}

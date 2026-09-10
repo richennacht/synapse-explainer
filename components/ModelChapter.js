@@ -1,0 +1,43 @@
+"use client";
+
+import {useMemo,useState} from "react";
+
+const CODES=["LUMEN","EMBER","NOVA","CIRRUS","ATLAS","ORBIT","KITE","SOLACE"];
+const argmax=a=>a.reduce((best,v,i)=>v>a[best]?i:best,0);
+
+function runTrial(eta,competing,trial){
+ const d=8,key=Array(d).fill(0); key[trial%d]=1; const correct=trial%CODES.length;
+ const baseline=Array(8).fill(0).map((_,i)=>.18*Math.sin((trial+1)*(i+2))); const memory=Array.from({length:8},()=>Array(d).fill(0));
+ memory[correct][trial%d]+=eta;
+ for(let j=0;j<competing;j++){const wrong=(correct+j+1)%8;memory[wrong][trial%d]+=eta*(.72-j*.07)}
+ const logits=baseline.map((v,i)=>v+memory[i].reduce((s,w,k)=>s+w*key[k],0));
+ return argmax(logits)===correct;
+}
+const accuracy=(eta,competing)=>Array.from({length:64},(_,i)=>runTrial(eta,competing,i)).filter(Boolean).length/64;
+
+export const modelSections=[
+ {id:"model-task",number:"2.1",title:"A delayed access-code task"},{id:"model-baseline",number:"2.2",title:"The frozen model has no private working state"},{id:"model-kv",number:"2.3",title:"KV cache preserves every token"},{id:"model-write",number:"2.4",title:"Write the association into fast weights"},{id:"model-recall",number:"2.5",title:"Recall changes the next-token evidence"},{id:"model-benchmark",number:"2.6",title:"Benchmark the three memory conditions"},{id:"model-boundary",number:"2.7",title:"What is measured and what remains to validate"}
+];
+
+export default function ModelChapter(){
+ const [variant,setVariant]=useState("base"),[eta,setEta]=useState(.35),[competing,setCompeting]=useState(1);
+ const acc=accuracy(eta,competing),curve=useMemo(()=>Array.from({length:21},(_,i)=>({eta:i/20,acc:accuracy(i/20,competing)})),[competing]);
+ return <>
+  <section id="model-task"><N n="2.1" title="A delayed access-code task"/><p>We use the same frozen SmolLM2-135M-Instruct architecture in every condition. It reads a demonstration such as “The emergency access code for Sector K is LUMEN.” After unrelated text, it receives only “What is the access code for Sector K?”</p><div className="sequence-strip"><span>write</span><b>Sector K → LUMEN</b><i/><span>distractors</span><b>weather · routing · status</b><i/><span>query</span><b>Sector K → ?</b></div></section>
+  <section id="model-baseline"><N n="2.2" title="The frozen model has no private working state"/><p>Without the demonstration in its active context and without another state store, the frozen network cannot recover a newly invented code from its trained parameters. Select a condition to inspect how memory is added around the same model.</p><VariantTabs value={variant} set={setVariant}/><ModelStack variant={variant}/></section>
+  <section id="model-kv"><N n="2.3" title="KV cache preserves every token"/><p>SmolLM2 has 30 layers, 3 key-value heads and a head dimension of 64. In fp16, each retained token therefore adds 23,040 bytes of KV state. At the published 8,192-token limit, that is about 180 MiB for one sequence.</p><div className="cost-equation"><span>2 tensors</span><b>×</b><span>30 layers</span><b>×</b><span>3 KV heads</span><b>×</b><span>64 values</span><b>×</b><span>2 bytes</span><strong>22.5 KiB / token</strong></div></section>
+  <section id="model-write"><N n="2.4" title="Write the association into fast weights"/><p>A frozen projection turns the cue into key k and the demonstrated answer into value v. Their outer product writes a bounded association. Plasticity η controls how strongly this single experience changes the temporary matrix.</p><div className="write-stage"><Vector values={[1,0,.2,0]} label="k · Sector K"/><b>⊗</b><Vector values={[0,.2,1,0]} label="v · LUMEN"/><b>=</b><MemoryMatrix eta={eta}/></div><Control label="Hebbian plasticity η" value={eta} min={0} max={1} step={.05} set={setEta}/></section>
+  <section id="model-recall"><N n="2.5" title="Recall changes the next-token evidence"/><p>At query time, the cue projects to q. Multiplying Mq retrieves evidence for the stored answer. The model’s frozen logits still contribute, but a sufficiently strong matching trace can move LUMEN above competing tokens.</p><div className="logit-bars">{[["LUMEN",.18+.72*eta],["EMBER",.31],["NOVA",.22],["ATLAS",.16]].map(([name,value])=><div key={name}><span>{name}</span><i style={{width:`${Math.min(100,value*100)}%`}}/><b>{Number(value).toFixed(2)}</b></div>)}</div></section>
+  <section id="model-benchmark"><N n="2.6" title="Benchmark the three memory conditions"/><p>This live teaching benchmark executes 64 delayed associations. “No memory” retains neither the demonstration nor a plastic state. “KV cache” keeps the demonstration tokens exactly. “Plastic state” runs the outer-product write and retrieval shown above.</p><BenchmarkChart curve={curve} eta={eta} acc={acc}/><Control label="Competing writes to the same cue" value={competing} min={0} max={5} step={1} set={setCompeting}/><div className="benchmark-table"><div><span>No memory</span><b>12.5%</b><small>deterministic guess baseline</small></div><div><span>KV cache</span><b>100%</b><small>demonstration retained exactly</small></div><div><span>Plastic state</span><b>{Math.round(acc*100)}%</b><small>computed from η and interference</small></div></div></section>
+  <section id="model-boundary"><N n="2.7" title="What is measured and what remains to validate"/><p className="article-note">Evidence boundary: the KV footprint uses SmolLM2’s published configuration. The access-code benchmark is real deterministic computation for the associative adapter, not a claim that we have retrained or modified the released SmolLM2 checkpoint. Connecting this adapter to frozen hidden states and reporting end-to-end token likelihood is the next experimental milestone.</p><p className="sources">Model: HuggingFaceTB/SmolLM2-135M-Instruct, Apache-2.0. Visual approach inspired by Brendan Bycroft’s LLM Visualization; no unlicensed source assets are copied.</p></section>
+ </>;
+}
+
+function N({n,title}){return <><span className="number">{n}</span><h2>{title}</h2></>}
+function VariantTabs({value,set}){return <div className="variant-tabs" role="tablist" aria-label="Memory condition">{[["base","No memory"],["kv","KV cache"],["plastic","Plastic state"]].map(([id,label])=><button key={id} role="tab" aria-selected={value===id} onClick={()=>set(id)}>{label}</button>)}</div>}
+function ModelStack({variant}){return <div className={`model-stack ${variant}`}><div className="token-column">{["The","code","is","LUMEN"].map(x=><i key={x}>{x}</i>)}</div><div className="tensor-tower">{Array.from({length:6},(_,i)=><div key={i}><span>layer {i?`${i*5}`:"embed"}</span>{Array.from({length:24},(_,j)=><i key={j}/>)}</div>)}</div>{variant==="kv"&&<div className="memory-rail kv-rail"><small>growing KV state</small>{Array.from({length:12},(_,i)=><i key={i}/>)}</div>}{variant==="plastic"&&<div className="memory-rail plastic-rail"><small>fixed plastic matrix</small>{Array.from({length:16},(_,i)=><i key={i}/>)}</div>}<p>{variant==="base"?"Only frozen slow weights":variant==="kv"?"Keys and values accumulate with tokens":"A fixed matrix changes during inference"}</p></div>}
+function Vector({values,label}){return <div className="teaching-vector"><small>{label}</small>{values.map((v,i)=><i key={i} style={{opacity:.18+.82*v}}>{v.toFixed(1)}</i>)}</div>}
+function MemoryMatrix({eta}){return <div className="teaching-matrix"><small>M = ηvkᵀ</small>{[0,.2,1,0].flatMap(v=>[1,0,.2,0].map(k=>v*k*eta)).map((v,i)=><i key={i} style={{opacity:.14+.86*v}}>{v.toFixed(2)}</i>)}</div>}
+function Control({label,value,min,max,step,set}){return <label className="model-control"><span>{label}<output>{step<1?value.toFixed(2):value}</output></span><input type="range" aria-label={label} min={min} max={max} step={step} value={value} onChange={e=>set(Number(e.target.value))}/></label>}
+function BenchmarkChart({curve,eta,acc}){const W=720,H=300,x=v=>56+v*630,y=v=>26+(1-v)*220,path=curve.map((p,i)=>`${i?"L":"M"}${x(p.eta)},${y(p.acc)}`).join(" ");return <figure className="benchmark-chart"><figcaption>Plastic-state accuracy as η changes</figcaption><svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Plastic state accuracy is ${Math.round(acc*100)} percent at plasticity ${eta}`}><line className="axis" x1="56" y1={y(0)} x2="686" y2={y(0)}/><line className="axis" x1="56" y1="26" x2="56" y2={y(0)}/><path d={path}/><circle cx={x(eta)} cy={y(acc)} r="6"/><text x={x(eta)} y={y(acc)-13} textAnchor="middle">{Math.round(acc*100)}%</text><text className="axis-title" x="370" y="286" textAnchor="middle">Hebbian plasticity η</text><text className="axis-title" transform="translate(17 136) rotate(-90)" textAnchor="middle">exact recall</text></svg></figure>}
+

@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import "./article.css";
+import MathLine, {formulaFor} from "../components/MathLine";
+import STDPGraph from "../components/STDPGraph";
 
 const chapterMeta = [
  {id:"chapter-1",number:"CHAPTER 1",short:"Biology to silicon"},
@@ -43,19 +45,21 @@ export default function Page(){
   <nav className="section-index" aria-label={`${chapterMeta.find(x=>x.id===active.id)?.short||active.number} sections`}>{active.sections.map(section=><button key={section.id} onClick={()=>document.getElementById(section.id)?.scrollIntoView({behavior:"smooth"})}><i/><span>{section.number}</span> {section.title}</button>)}</nav>
   <main className="chapter-main" id="top"><article>
    <header className="chapter-intro"><time>{active.number} OF 3</time><h1>{active.title}</h1><p className="lead">{active.intro}</p></header>
-   {active.sections.map(section=><section id={section.id} key={section.id}><span className="number">{section.number}</span><h2>{section.title}</h2><ArticleLines lines={section.lines}/></section>)}
+   {active.sections.map(section=><section id={section.id} key={section.id}><span className="number">{section.number}</span><h2>{section.title}</h2><ArticleLines lines={section.lines} sectionNumber={section.number}/></section>)}
    <button className="next-part" onClick={()=>{const index=chapters.findIndex(ch=>ch.id===active.id);choose(chapters[(index+1)%chapters.length].id)}}><span>{active.id==="chapter-3"?"Return to Chapter 1":"Continue to the next chapter"}</span><span>→</span></button>
   </article></main>
  </>;
 }
 
-function ArticleLines({lines}){return <>{lines.map((line,index)=>{
- const equation=/[=∈∝⊗Σ√]|^Δw|^qₜ|^kₜ|^vₜ|^Attn|^hₜ|^sᵢ|^Wᵢ|^Wᵗ|^Mₜ|^v̂/.test(line);
+function ArticleLines({lines,sectionNumber}){return <>{lines.map((line,index)=>{
+ const equation=formulaFor(line);
  const label=/^(Architectural Note|The Problem|Evidence Boundary|Where:|Step \d|Property$)/.test(line);
- const quote=line.startsWith('"')||line.startsWith('— Donald Hebb');
- if(equation)return <div className="equation-line" key={index}><code>{line}</code></div>;
+ const quote=line.startsWith('"When an axon');
+ const citation=line.startsWith('— Donald Hebb');
+ if(equation)return <MathLine line={line} key={index}/>;
  if(label)return <p className="article-note" key={index}>{line}</p>;
  if(quote)return <blockquote key={index}>{line}</blockquote>;
+ if(citation)return <p className="quote-citation" key={index}>{line}</p>;
  return <p key={index}>{line}</p>;
- })}</>}
+ })}{sectionNumber==="1.4.1"&&<STDPGraph/>}</>}
 

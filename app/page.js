@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import "./article.css";
 import MathLine, {formulaFor} from "../components/MathLine";
 import STDPGraph from "../components/STDPGraph";
+import {FastSlowFigure,HebbianFigure,OjaFigure} from "../components/LearningFigures";
 
 const chapterMeta = [
  {id:"chapter-1",number:"CHAPTER 1",short:"Biology to silicon"},
@@ -61,5 +62,5 @@ function ArticleLines({lines,sectionNumber}){return <>{lines.map((line,index)=>{
  if(quote)return <blockquote key={index}>{line}</blockquote>;
  if(citation)return <p className="quote-citation" key={index}>{line}</p>;
  return <p key={index}>{line}</p>;
- })}{sectionNumber==="1.4.1"&&<STDPGraph/>}</>}
+ })}{sectionNumber==="1.4.1"&&<STDPGraph/>}{sectionNumber==="1.6"&&<HebbianFigure/>}{sectionNumber==="1.6.1"&&<OjaFigure/>}{sectionNumber==="1.7.1"&&<FastSlowFigure/>}</>}
 

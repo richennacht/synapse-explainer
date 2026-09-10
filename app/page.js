@@ -5,6 +5,7 @@ import "./article.css";
 import MathLine, {formulaFor} from "../components/MathLine";
 import STDPGraph from "../components/STDPGraph";
 import {FastSlowFigure,HebbianFigure,OjaFigure} from "../components/LearningFigures";
+import ModelChapter,{modelSections} from "../components/ModelChapter";
 
 const chapterMeta = [
  {id:"chapter-1",number:"CHAPTER 1",short:"Biology to silicon"},
@@ -28,7 +29,9 @@ function parseArticle(source){
   }
   chapters.push({id:`chapter-${number}`,number:`CHAPTER ${number}`,title,intro:intro.join(" "),sections});
  }
- return chapters;
+ const first={...chapters[0],title:"Why Connections Remember",intro:"Begin with biological plasticity, then follow the same idea into fast weights, associative memory and the limits of the KV cache.",sections:[...chapters[0].sections,...chapters[1].sections.map((s,i)=>({...s,number:`1.${8+i}`,id:`foundation-${s.id}`}))]};
+ const model={id:"chapter-2",number:"CHAPTER 2",title:"Giving SmolLM2 Temporary Working Memory",intro:"Start with one frozen open-weight model. Compare no retained context, a growing KV cache and a bounded Hebbian associative state on the same delayed access-code task.",sections:modelSections};
+ return [first,model,chapters[2]];
 }
 
 export default function Page(){
@@ -46,7 +49,7 @@ export default function Page(){
   <nav className="section-index" aria-label={`${chapterMeta.find(x=>x.id===active.id)?.short||active.number} sections`}>{active.sections.map(section=><button key={section.id} onClick={()=>document.getElementById(section.id)?.scrollIntoView({behavior:"smooth"})}><i/><span>{section.number}</span> {section.title}</button>)}</nav>
   <main className="chapter-main" id="top"><article>
    <header className="chapter-intro"><time>{active.number} OF 3</time><h1>{active.title}</h1><p className="lead">{active.intro}</p></header>
-   {active.sections.map(section=><section id={section.id} key={section.id}><span className="number">{section.number}</span><h2>{section.title}</h2><ArticleLines lines={section.lines} sectionNumber={section.number}/></section>)}
+   {active.id==="chapter-2"?<ModelChapter/>:active.sections.map(section=><section id={section.id} key={section.id}><span className="number">{section.number}</span><h2>{section.title}</h2><ArticleLines lines={section.lines} sectionNumber={section.number}/></section>)}
    <button className="next-part" onClick={()=>{const index=chapters.findIndex(ch=>ch.id===active.id);choose(chapters[(index+1)%chapters.length].id)}}><span>{active.id==="chapter-3"?"Return to Chapter 1":"Continue to the next chapter"}</span><span>→</span></button>
   </article></main>
  </>;
